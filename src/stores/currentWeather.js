@@ -14,6 +14,13 @@ export const useCurrenWeatherStore = defineStore('currenWeather', () => {
     const windKph = ref('');
     const windDir = ref('');
     const humidity = ref('');
+    const isValidRequest = ref(true);
+    const errorText = ref('');
+
+    function validationSearch(value, text) {
+        isValidRequest.value = value;
+        errorText.value = text;
+    }
 
     async function getCurrentWeather(city) {
 
@@ -25,7 +32,10 @@ export const useCurrenWeatherStore = defineStore('currenWeather', () => {
             const data = await response.json();
 
             if (!response.ok) {
+                isValidRequest.value = false;
+                errorText.value = 'We do not know this city';
                 throw new Error('Ошибка');
+
             } else {
                 cityName.value = data.location.name;
                 country.value = data.location.country;
@@ -41,10 +51,25 @@ export const useCurrenWeatherStore = defineStore('currenWeather', () => {
         }
         catch (e) {
             console.log(e);
-            // return ThunkApi.rejectWithValue('Произошла непредвиденная ошибка');
+            isValidRequest.value = false;
+            errorText.value = 'We do not know this city';
         }
-
     }
 
-    return { cityName, country, localtime, temperatureNow, condition, conditionIcon, feelslike, windKph, windDir, humidity, getCurrentWeather }
+    return {
+        cityName,
+        country,
+        localtime,
+        temperatureNow,
+        condition,
+        conditionIcon,
+        feelslike,
+        windKph,
+        windDir,
+        humidity,
+        isValidRequest,
+        errorText,
+        getCurrentWeather,
+        validationSearch
+    }
 })

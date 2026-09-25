@@ -21,10 +21,10 @@ export const useForecastStore = defineStore('forecast', () => {
             if (!response.ok) {
                 throw new Error('Ошибка');
             } else {
-               todayHours.value = data.forecast.forecastday[0].hour;
-               todayAstro.value = data.forecast.forecastday[0].astro;
-               forecastTomorrow.value = data.forecast.forecastday[1];
-               forecastAfterTomorrow.value = data.forecast.forecastday[2];
+                todayHours.value = data.forecast.forecastday[0].hour;
+                todayAstro.value = data.forecast.forecastday[0].astro;
+                forecastTomorrow.value = data.forecast.forecastday[1];
+                forecastAfterTomorrow.value = data.forecast.forecastday[2];
             }
         }
         catch (e) {
@@ -34,5 +34,11 @@ export const useForecastStore = defineStore('forecast', () => {
 
     }
 
-    return { getForecastWeather, todayHours, todayAstro, forecastTomorrow, forecastAfterTomorrow }
+    return {
+        todayHours,
+        todayAstro,
+        forecastTomorrow,
+        forecastAfterTomorrow,
+        getForecastWeather
+    }
 })

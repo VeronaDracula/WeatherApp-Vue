@@ -1,16 +1,38 @@
 <script setup>
 import { ref } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useCurrenWeatherStore } from '@/stores/currentWeather';
 import { useForecastStore } from '@/stores/forecast';
 
 const currenWeatherStore = useCurrenWeatherStore();
 const forecastStore = useForecastStore();
+const { isValidRequest, errorText } = storeToRefs(currenWeatherStore);
 
-const localCity = ref();
+const localCity = ref('');
+const regex = /^[A-Za-z ]+$/;
+const isValid = ref(true);
+
+function validation(value) {
+    if (!regex.test(value)) {
+        currenWeatherStore.validationSearch(false, 'Use the Latin alphabet');
+
+    } else {
+        currenWeatherStore.validationSearch(true);
+    }
+
+    if (value === '') {
+        currenWeatherStore.validationSearch(true);
+    }
+}
 
 function search(value) {
-    currenWeatherStore.getCurrentWeather(value);
-    forecastStore.getForecastWeather(value);
+    if (localCity.value.trim() === '') {
+        currenWeatherStore.validationSearch(false, 'Enter the city');
+
+    } else {
+        currenWeatherStore.getCurrentWeather(value);
+        forecastStore.getForecastWeather(value);
+    }
 }
 
 </script>
@@ -22,11 +44,14 @@ function search(value) {
 
             <form class="search-form">
                 <div class="search-form__input-box">
-                    <input class="search-form__input" v-model="localCity" placeholder="City" type="text" id="search"
-                        name="search" required />
-                    <!-- <span class="">Incorrect input</span> -->
+                    <input class="search-form__input" v-model="localCity" @input="validation(localCity)"
+                        placeholder="City" type="text" id="search" name="search" required />
+                    <span class="search-form__input-error" v-if="!isValidRequest">
+                        {{ errorText }}
+                    </span>
                 </div>
-                <button class="search-form__btn" type="submit" @click.prevent="search(localCity)">Search</button>
+                <button class="search-form__btn" :class="{ disabled: !isValidRequest }" type="submit"
+                    @click.prevent="search(localCity)">Search</button>
             </form>
         </div>
     </header>
@@ -66,7 +91,7 @@ function search(value) {
 }
 
 .search-form__input-error {
-    opacity: 0;
+    // opacity: 0;
     position: absolute;
     left: 0;
     top: 40px;
@@ -74,10 +99,10 @@ function search(value) {
     font-size: 10px;
     line-height: 12px;
     color: #34C924;
-}
 
-.search-form__input-error--active {
-    opacity: 1;
+    // &.active {
+    //     opacity: 1;
+    // }
 }
 
 .search-form__input {
@@ -94,19 +119,18 @@ function search(value) {
     color: #fff;
     border-radius: 4px;
     background: rgba(255, 255, 255, 0.1);
-}
 
-.search-form__input::placeholder {
-    color: #f1f6f2;
-    opacity: 0.5;
-}
+    &::placeholder {
+        color: #f1f6f2;
+        opacity: 0.5;
+    }
 
-.search-form__input:focus {
-    outline: none;
+    &:focus {
+        outline: none;
+    }
 }
 
 .search-form__btn {
-
     display: flex;
     align-items: center;
     justify-content: center;
@@ -121,15 +145,17 @@ function search(value) {
     color: #fff;
     border-radius: 4px;
     background: rgba(0, 0, 0, 0.1);
+
+    &:hover {
+        cursor: pointer;
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    &.disabled {
+        pointer-events: none;
+        background: rgba(131, 151, 171, 0.2);
+    }
 }
-
-.search-form__btn:hover {
-    cursor: pointer;
-    background: rgba(0, 0, 0, 0.2);
-}
-
-
-
 
 @media screen and (max-width: 600px) {
     .logo {
