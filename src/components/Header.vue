@@ -1,0 +1,163 @@
+<script setup>
+import { ref } from 'vue';
+import { useCurrenWeatherStore } from '@/stores/currentWeather';
+import { useForecastStore } from '@/stores/forecast';
+
+const currenWeatherStore = useCurrenWeatherStore();
+const forecastStore = useForecastStore();
+
+const localCity = ref();
+
+function search(value) {
+    currenWeatherStore.getCurrentWeather(value);
+    forecastStore.getForecastWeather(value);
+}
+
+</script>
+
+<template>
+    <header class="header">
+        <div class="header__container container">
+            <p class="logo">WeatherApp</p>
+
+            <form class="search-form">
+                <div class="search-form__input-box">
+                    <input class="search-form__input" v-model="localCity" placeholder="City" type="text" id="search"
+                        name="search" required />
+                    <!-- <span class="">Incorrect input</span> -->
+                </div>
+                <button class="search-form__btn" type="submit" @click.prevent="search(localCity)">Search</button>
+            </form>
+        </div>
+    </header>
+</template>
+
+<style lang="scss" scoped>
+.header {
+    box-sizing: border-box;
+    background: rgba(0, 0, 0, 0.3);
+    min-height: 80px;
+}
+
+.header__container {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 80px;
+}
+
+.logo {
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 27px;
+    margin: 0;
+}
+
+.search-form {
+    display: flex;
+}
+
+
+.search-form__input-box {
+    position: relative;
+    display: flex;
+    margin: 0 15px 0 0;
+}
+
+.search-form__input-error {
+    opacity: 0;
+    position: absolute;
+    left: 0;
+    top: 40px;
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 12px;
+    color: #34C924;
+}
+
+.search-form__input-error--active {
+    opacity: 1;
+}
+
+.search-form__input {
+    box-sizing: border-box;
+    margin: 0 15px 0 0;
+    padding: 0 10px;
+    height: 36px;
+    width: 300px;
+
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 16px;
+    border: none;
+    color: #fff;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.search-form__input::placeholder {
+    color: #f1f6f2;
+    opacity: 0.5;
+}
+
+.search-form__input:focus {
+    outline: none;
+}
+
+.search-form__btn {
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 16px;
+    border: none;
+    width: 64px;
+    min-width: 64px;
+    height: 36px;
+    color: #fff;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.search-form__btn:hover {
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+
+
+
+@media screen and (max-width: 600px) {
+    .logo {
+        margin-right: 20px;
+    }
+
+    .search-form__input {
+        width: 100%;
+    }
+}
+
+
+@media screen and (max-width: 475px) {
+    .header {
+        padding: 20px 0;
+    }
+
+    .header__container {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .logo {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}
+</style>
